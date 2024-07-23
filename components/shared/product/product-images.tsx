@@ -29,7 +29,7 @@ export default function ProductImages({ images }: { images: string[] }) {
         {images.map((image, index) => (
           <div
             key={image}
-            // Applique des styles conditionnels et gère les clics pour changer l'image principale.
+            /* Applique des styles conditionnels et gère les clics pour changer l'image principale. */
             className={cn(
               'border mr-2 cursor-pointer hover:border-orange-600',
               current === index && 'border-orange-500'

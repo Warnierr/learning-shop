@@ -9,30 +9,41 @@ const ProductCard = ({ product }: { product: Product }) => {
     <Card className="w-full max-w-sm">
       <CardHeader className="p-0 items-center">
         <Link href={`/product/${product.slug}`}>
+          {/* Renders the product image using Next.js's Image for optimized loading. */}
           <Image
-            alt={product.name}
-            className="aspect-square object-cover rounded"
-            height={300}
-            src={product.images![0]}
-            width={300}
+            alt={product.name} /* Provides an alt text for accessibility. */
+            className="aspect-square object-cover rounded" /* Applies styling to make the image square and rounded. */
+            height={300} /* Sets a fixed height for consistency. */
+            src={
+              product.images![0]
+            } /* Uses the first image from the product's image array. */
+            width={300} /* Sets a fixed width to match the height. */
           />
         </Link>
       </CardHeader>
       <CardContent className="p-4 grid gap-4">
         <div>
+          {/* Displays the product brand. */}
           <p className="text-xs">{product.brand}</p>
         </div>
         <div>
+          {/* Product name is wrapped in a Link for easy navigation to its details. */}
           <Link href={`/product/${product.slug}`}>
             <h2 className="text-sm font-medium">{product.name}</h2>
           </Link>
         </div>
         <div className="flex-between gap-4">
+          {/* Displays the product rating. */}
           <p>{product.rating} stars</p>
+          {/* Conditionally displays the price or an out-of-stock message. */}
           {product.stock > 0 ? (
-            <p className="font-bold">${product.price}</p>
+            <p className="font-bold">
+              ${product.price}
+            </p> /* Shows price if in stock. */
           ) : (
-            <p className="text-destructive">Out of Stock</p>
+            <p className="text-destructive">
+              Out of Stock
+            </p> /* Shows out-of-stock status. */
           )}
         </div>
       </CardContent>

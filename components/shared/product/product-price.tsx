@@ -1,31 +1,37 @@
-'use server' // Directive to use this script on the server side.
+// Directive to ensure this script runs on the server side.
+'use server'
 
-// Importing the 'desc' function from 'drizzle-orm' for descending order sorting.
+// Imports the 'desc' function from 'drizzle-orm' for sorting in descending order.
 import { desc } from 'drizzle-orm'
 
-// Importing the database configuration from a specific location in the project.
+// Imports the database configuration from a specific path in the project.
 import db from '@/db/drizzle'
 
-// Importing the 'products' schema from the database schema definitions.
+// Imports the 'products' schema from the project's database schema definitions.
 import { products } from '@/db/schema'
 
-// Importing the 'eq' function for equality comparison in SQL queries from 'drizzle-orm'.
+// Imports the 'eq' function for equality conditions in SQL queries from 'drizzle-orm'.
 import { eq } from 'drizzle-orm/sql'
 
-// Asynchronous function to get the latest products.
+/**
+ * Asynchronously fetches the latest products from the database.
+ * Returns an array of product records sorted by creation date in descending order,
+ * limited to the first 4 entries.
+ */
 export async function getLatestProducts() {
-  // Querying the database to find multiple products.
   const data = await db.query.products.findMany({
-    orderBy: [desc(products.createdAt)], // Orders the results by 'createdAt' in descending order.
-    limit: 4, // Limits the results to the first 4 products.
+    orderBy: [desc(products.createdAt)], // Sorts the results by 'createdAt' in descending order.
+    limit: 4, // Limits the output to 4 products.
   })
-  return data // Returns the fetched data.
+  return data // Returns the fetched products.
 }
 
-// Asynchronous function to get a product by its slug.
+/**
+ * Asynchronously retrieves a specific product by its slug.
+ * If a product with the matching slug is found, it returns the first such entry.
+ */
 export async function getProductBySlug(slug: string) {
-  // Querying the database to find the first product matching the given slug.
   return await db.query.products.findFirst({
-    where: eq(products.slug, slug), // Where condition checks if the product's slug equals the provided slug.
+    where: eq(products.slug, slug), // Filters to find a product where its 'slug' matches the provided slug.
   })
 }

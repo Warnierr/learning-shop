@@ -1,32 +1,38 @@
-// Utilise 'use server' pour indiquer que ce module doit uniquement s'exécuter côté serveur.
+// Directive to ensure this script runs on the server side.
 'use server'
 
-// Importe la fonction 'desc' pour spécifier un ordre décroissant dans les requêtes.
+// Imports the 'desc' function from 'drizzle-orm' for sorting in descending order.
 import { desc } from 'drizzle-orm'
 
-// Importe une instance de base de données configurée depuis un chemin spécifique.
+// Imports a pre-configured database instance from a specific path within the project.
 import db from '@/db/drizzle'
 
-// Importe le schéma des produits de la base de données.
+// Imports the product schema from the database schema definitions.
 import { products } from '@/db/schema'
 
-// Importe la fonction 'eq' pour utiliser des conditions d'égalité dans les requêtes SQL.
+// Imports the 'eq' function for creating equality conditions in SQL queries from 'drizzle-orm'.
 import { eq } from 'drizzle-orm/sql'
 
-// Définit une fonction asynchrone pour récupérer les derniers produits ajoutés.
+/**
+ * Asynchronously fetches the latest products from the database.
+ * @returns An array of product records sorted by creation date in descending order,
+ * limited to the first 4 entries.
+ */
 export async function getLatestProducts() {
-  // Effectue une requête pour trouver plusieurs produits, en les triant par date de création en ordre décroissant.
   const data = await db.query.products.findMany({
-    orderBy: [desc(products.createdAt)],
-    limit: 4, // Limite le nombre de produits retournés à 4.
+    orderBy: [desc(products.createdAt)], // Sorts the results by 'createdAt' in descending order.
+    limit: 4, // Limits the output to 4 products.
   })
-  return data // Retourne les produits récupérés.
+  return data // Returns the fetched products.
 }
 
-// Définit une fonction asynchrone pour récupérer un produit spécifique par son slug.
+/**
+ * Asynchronously retrieves a specific product by its slug.
+ * @param slug - The slug of the product to retrieve.
+ * @returns A product object if a matching slug is found.
+ */
 export async function getProductBySlug(slug: string) {
-  // Effectue une requête pour trouver le premier produit correspondant au slug donné.
   return await db.query.products.findFirst({
-    where: eq(products.slug, slug), // Utilise une condition d'égalité pour filtrer par slug.
+    where: eq(products.slug, slug), // Filters to find a product where its 'slug' matches the provided slug.
   })
 }
