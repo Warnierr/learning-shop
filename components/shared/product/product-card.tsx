@@ -3,6 +3,7 @@ import Link from 'next/link'
 
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Product } from '@/types'
+import ProductPrice from './product-price'
 
 const ProductCard = ({ product }: { product: Product }) => {
   return (
@@ -37,9 +38,7 @@ const ProductCard = ({ product }: { product: Product }) => {
           <p>{product.rating} stars</p>
           {/* Conditionally displays the price or an out-of-stock message. */}
           {product.stock > 0 ? (
-            <p className="font-bold">
-              ${product.price}
-            </p> /* Shows price if in stock. */
+            <ProductPrice value={Number(product.price)} />
           ) : (
             <p className="text-destructive">
               Out of Stock
