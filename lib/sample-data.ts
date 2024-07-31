@@ -1,4 +1,22 @@
+import { users } from '@/db/schema'
+import email from 'next-auth/providers/email'
+
 const sampleData = {
+  users: [
+    {
+      name: 'Raouf',
+      email: 'rww.warnier@gmail.com',
+      password: hashSync('1234567', 10),
+      role: 'admin',
+    },
+    {
+      name: 'Raouf2',
+      email: 'rw.warnierr@gmail.com',
+      password: hashSync('abcdefg', 10),
+      role: 'admin',
+    },
+  ],
+
   products: [
     {
       name: 'BRACELET PIERRES MIXTES',
@@ -58,3 +76,6 @@ const sampleData = {
 }
 
 export default sampleData
+function hashSync(arg0: string, arg1: number) {
+  throw new Error('Function not implemented.')
+}
