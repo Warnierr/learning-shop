@@ -29,16 +29,24 @@ const main = async () => {
     // Initializes the drizzle ORM with the connected client.
     const db = drizzle(client)
 
-    // Deletes existing entries from the 'products' table to ensure a clean state before seeding.
+    // Deletes existing entries from the 'accounts', 'users' and 'products' table to ensure a clean state before seeding.
+    await db.delete(schema.accounts)
+    await db.delete(schema.users)
     await db.delete(schema.products)
+
+    // Inserts new users into the 'users' table using the sample data and returns the inserted data.
+    const resUsers = await db
+      .insert(schema.users)
+      .values(sampleData.users)
+      .returning()
 
     // Inserts new products into the 'products' table using the sample data and returns the inserted data.
     const resProducts = await db
       .insert(schema.products)
       .values(sampleData.products)
       .returning()
-    // Logs the result of the product insertions to the console.
-    console.log({ resProducts })
+    // Logs the result of the product and users insertions to the console.
+    console.log({ resProducts, resUsers })
 
     // Closes the database connection.
     await client.end()
