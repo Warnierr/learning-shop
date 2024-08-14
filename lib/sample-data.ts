@@ -1,5 +1,4 @@
-import { users } from '@/db/schema'
-import email from 'next-auth/providers/email'
+import { hashSync } from 'bcrypt-ts-edge'
 
 const sampleData = {
   users: [
@@ -76,6 +75,3 @@ const sampleData = {
 }
 
 export default sampleData
-function hashSync(arg0: string, arg1: number) {
-  throw new Error('Function not implemented.')
-}
