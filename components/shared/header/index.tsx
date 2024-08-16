@@ -37,7 +37,7 @@ const Header = () => {
           </Button>
           {/* Button wrapping a link to the sign-in page with an icon. */}
           <Button asChild>
-            <Link href="/signin">
+            <Link href="/api/auth/signin">
               <UserIcon />
               Sign In
             </Link>
