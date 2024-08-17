@@ -1,5 +1,3 @@
-// Imports specific icons from 'lucide-react' to be used in the header.
-import { ShoppingCart, UserIcon } from 'lucide-react'
 // Imports the Image component from Next.js for optimized image handling.
 import Image from 'next/image'
 // Imports the Link component from Next.js to enable navigation.
@@ -9,6 +7,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 // Imports a constant value representing the application's name.
 import { APP_NAME } from '@/lib/constants'
+import Menu from './menu'
 
 // Defines the Header functional component.
 const Header = () => {
@@ -27,22 +26,7 @@ const Header = () => {
             {APP_NAME}
           </Link>
         </div>
-        <div className="space-x-2">
-          {/* Button wrapping a link to the shopping cart with an icon. */}
-          <Button asChild variant="ghost">
-            <Link href="/cart">
-              <ShoppingCart />
-              Cart
-            </Link>
-          </Button>
-          {/* Button wrapping a link to the sign-in page with an icon. */}
-          <Button asChild>
-            <Link href="/api/auth/signin">
-              <UserIcon />
-              Sign In
-            </Link>
-          </Button>
-        </div>
+        <Menu />
       </div>
     </header>
   )
