@@ -19,6 +19,8 @@ export const signInDefaultValues = {
   password: '',
 }
 
+// Defining default values for the sign-up process with an object containing four fields: name, email, password, and confirmPassword.
+// All fields are initialized with empty strings.
 export const signUpDefaultValues = {
   name: '',
   email: '',
