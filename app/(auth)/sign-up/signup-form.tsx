@@ -25,8 +25,7 @@ export default function SignUpForm() {
     const { pending } = useFormStatus() // Track if the form is pending submission
     return (
       <Button disabled={pending} className="w-full" variant="default">
-        {pending ? 'Submitting...' : 'Sign Up'} // Show "Submitting..." text if
-        the form is pending
+        {pending ? 'Submitting...' : 'Sign Up'}
       </Button>
     )
   }
