@@ -1,3 +1,5 @@
+'use client'
+
 // Importing necessary modules and components from external libraries and local components
 import Link from 'next/link' // for navigation links in Next.js
 import { useSearchParams } from 'next/navigation' // for working with URL search parameters
