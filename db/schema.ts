@@ -1,7 +1,9 @@
 // Imports various data type definitions and functions from 'drizzle-orm/pg-core' for PostgreSQL table and column management.
+import { CartItem } from '@/types'
 import {
   boolean,
   integer,
+  json,
   numeric,
   pgTable,
   text,
