@@ -1,34 +1,100 @@
-'use server' // Indicates that this code will be executed on the server-side.
+'use server'
 
-// Import necessary modules and utilities.
-import { auth } from '@/auth' // Imports the authentication module to manage user sessions.
-import db from '@/db/drizzle' // Imports the database configuration and connection using Drizzle ORM.
-import { carts } from '@/db/schema' // Imports the 'carts' schema from the database schema definitions.
-import { eq } from 'drizzle-orm' // Imports a utility for equality checks in database queries.
-import { cookies } from 'next/headers' // Imports the cookies utility for handling HTTP cookies in Next.js.
+import { auth } from '@/auth'
+import db from '@/db/drizzle'
+import { carts, products } from '@/db/schema'
+import { eq } from 'drizzle-orm'
+import { cookies } from 'next/headers'
+import { cartItemSchema } from '../validator'
+import { formatError, round2 } from '../utils'
+import { CartItem } from '@/types'
+import { revalidatePath } from 'next/cache'
 
-// Asynchronous function to retrieve the current user's cart or session-based cart.
-export async function getMyCard() {
-  // Retrieve the 'sessionCartId' cookie value, if available.
+const calcPrice = (items: CartItem[]) => {
+  const itemsPrice = round2(
+      items.reduce((acc, item) => acc + item.price * item.qty, 0)
+    ),
+    shippingPrice = round2(itemsPrice > 100 ? 0 : 10),
+    taxPrice = round2(0.15 * itemsPrice),
+    totalPrice = round2(itemsPrice + shippingPrice + taxPrice)
+  return {
+    itemsPrice: itemsPrice.toFixed(2),
+    shippingPrice: shippingPrice.toFixed(2),
+    taxPrice: taxPrice.toFixed(2),
+    totalPrice: totalPrice.toFixed(2),
+  }
+}
+
+export const addItemToCart = async (data: CartItem) => {
+  try {
+    const sessionCartId = cookies().get('sessionCartId')?.value
+    if (!sessionCartId) throw new Error('Cart Session not found')
+    const session = await auth()
+    const userId = session?.user.id as string | undefined
+    const cart = await getMyCart()
+    const item = cartItemSchema.parse(data)
+    const product = await db.query.products.findFirst({
+      where: eq(products.id, item.productId),
+    })
+    if (!product) throw new Error('Product not found')
+    if (!cart) {
+      if (product.stock < 1) throw new Error('Not enough stock')
+      await db.insert(carts).values({
+        userId: userId,
+        items: [item],
+        sessionCartId: sessionCartId,
+        ...calcPrice([item]),
+      })
+      revalidatePath(`/product/${product.slug}`)
+      return {
+        success: true,
+        message: 'Item added to cart successfully',
+      }
+    } else {
+      const existItem = cart.items.find((x) => x.productId === item.productId)
+      if (existItem) {
+        if (product.stock < existItem.qty + 1)
+          throw new Error('Not enough stock')
+        cart.items.find((x) => x.productId === item.productId)!.qty =
+          existItem.qty + 1
+      } else {
+        if (product.stock < 1) throw new Error('Not enough stock')
+        cart.items.push(item)
+      }
+      await db
+        .update(carts)
+        .set({
+          items: cart.items,
+          ...calcPrice(cart.items),
+        })
+        .where(eq(carts.id, cart.id))
+
+      revalidatePath(`/product/${product.slug}`)
+      return {
+        success: true,
+        message: `${product.name} ${
+          existItem ? 'updated in' : 'added to'
+        } cart successfully`,
+      }
+    }
+  } catch (error) {
+    return { success: false, message: formatError(error) }
+  }
+}
+
+export async function getMyCart() {
   const sessionCartId = cookies().get('sessionCartId')?.value
-
-  // If no 'sessionCartId' is found in the cookies, return 'undefined'.
   if (!sessionCartId) return undefined
-
-  // Fetch the current user's session details using the 'auth' function.
   const session = await auth()
-
-  // Extract the user ID from the session, if available.
   const userId = session?.user.id
-
-  // Query the database to find the user's cart:
-  // - If a user ID is present, find the cart associated with that user.
-  // - Otherwise, find the cart associated with the 'sessionCartId'.
   const cart = await db.query.carts.findFirst({
     where: userId
-      ? eq(carts.userId, userId) // Match the cart with the user ID.
-      : eq(carts.sessionCartId, sessionCartId), // Match the cart with the sessionCartId.
+      ? eq(carts.userId, userId)
+      : eq(carts.sessionCartId, sessionCartId),
   })
+  return cart
+}
 
-  // (Currently, the function does not return the 'cart' or handle further logic.)
+export const removeItemFromCart = async (productId: string) => {
+  return { success: true, message: `${productId} removed` }
 }
