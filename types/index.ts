@@ -13,5 +13,5 @@ import { InferSelectModel } from 'drizzle-orm'
 export type Product = InferSelectModel<typeof products>
 
 // CART
-export type Cart = InferSelectModel<typeof carts>
+
 export type CartItem = z.infer<typeof cartItemSchema>
