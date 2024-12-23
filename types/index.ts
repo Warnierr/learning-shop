@@ -1,5 +1,5 @@
 // Importing 'products' from the local database schema located at '@/db/schema'
-import { products } from '@/db/schema'
+import { carts, products } from '@/db/schema'
 import { cartItemSchema } from '@/lib/validator'
 
 import { z } from 'zod'
@@ -13,4 +13,5 @@ import { InferSelectModel } from 'drizzle-orm'
 export type Product = InferSelectModel<typeof products>
 
 // CART
+export type Cart = InferSelectModel<typeof carts>
 export type CartItem = z.infer<typeof cartItemSchema>
